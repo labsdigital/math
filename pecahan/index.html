@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Membandingkan Pecahan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 40px;
+            font-size: 2em;
+        }
+
+        .comparison-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .fraction-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .circle-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .fraction-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .number-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .arrow-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #FFD700;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .arrow-btn:hover {
+            background: #FFC700;
+            transform: scale(1.1);
+        }
+
+        .arrow-btn:active {
+            transform: scale(0.95);
+        }
+
+        .number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .fraction-line {
+            width: 100px;
+            height: 4px;
+            background: #333;
+            margin: 10px 0;
+        }
+
+        .comparison-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .comparison-btn {
+            width: 70px;
+            height: 70px;
+            border: 3px solid #667eea;
+            background: white;
+            border-radius: 15px;
+            font-size: 2.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .comparison-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .comparison-btn.selected {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback.correct {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .feedback.incorrect {
+            background: #f44336;
+            color: white;
+        }
+
+        .feedback.neutral {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .reset-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .reset-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .circle-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .number {
+                font-size: 2.5em;
+            }
+
+            .comparison-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Belajar Membandingkan Pecahan</h1>
+        
+        <div class="comparison-area">
+            <!-- Pecahan Kiri -->
+            <div class="fraction-box">
+                <div class="circle-container">
+                    <svg id="circle1"></svg>
+                </div>
+                <div class="fraction-display">
+                    <div class="number-control">
+                        <button class="arrow-btn" onclick="changeValue('num1', 1)">▲</button>
+                        <span class="number" id="num1">0</span>
+                        <button class="arrow-btn" onclick="changeValue('num1', -1)">▼</button>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div class="number-control">
+                        <button class="arrow-btn" onclick="changeValue('den1', 1)">▲</button>
+                        <span class="number" id="den1">0</span>
+                        <button class="arrow-btn" onclick="changeValue('den1', -1)">▼</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pemilih Perbandingan -->
+            <div class="comparison-selector">
+                <button class="comparison-btn" onclick="selectComparison('<')">&lt;</button>
+                <button class="comparison-btn" onclick="selectComparison('=')">=</button>
+                <button class="comparison-btn" onclick="selectComparison('>')">></button>
+            </div>
+
+            <!-- Pecahan Kanan -->
+            <div class="fraction-box">
+                <div class="circle-container">
+                    <svg id="circle2"></svg>
+                </div>
+                <div class="fraction-display">
+                    <div class="number-control">
+                        <button class="arrow-btn" onclick="changeValue('num2', 1)">▲</button>
+                        <span class="number" id="num2">0</span>
+                        <button class="arrow-btn" onclick="changeValue('num2', -1)">▼</button>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div class="number-control">
+                        <button class="arrow-btn" onclick="changeValue('den2', 1)">▲</button>
+                        <span class="number" id="den2">0</span>
+                        <button class="arrow-btn" onclick="changeValue('den2', -1)">▼</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback neutral" id="feedback">
+            Pilih tanda perbandingan yang tepat!
+        </div>
+
+        <div class="reset-container">
+            <button class="reset-btn" onclick="resetAll()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedComparison = null;
+
+        function changeValue(id, delta) {
+            const element = document.getElementById(id);
+            let value = parseInt(element.textContent);
+            value += delta;
+            
+            // Batasi nilai minimum dan maksimum
+            if (id.startsWith('num')) {
+                // Dapatkan ID penyebut yang sesuai
+                const denId = id.replace('num', 'den');
+                const denominator = parseInt(document.getElementById(denId).textContent);
+                
+                // Batasi pembilang antara 0 dan nilai penyebut (maksimal 1)
+                if (denominator > 0) {
+                    value = Math.max(0, Math.min(denominator, value));
+                } else {
+                    // Jika penyebut 0, pembilang harus 0
+                    value = 0;
+                }
+            } else {
+                // Untuk penyebut, batasi antara 0 dan 20
+                value = Math.max(0, Math.min(20, value));
+                
+                // Jika penyebut berubah menjadi 0, atur pembilang menjadi 0
+                if (value === 0) {
+                    const numId = id.replace('den', 'num');
+                    document.getElementById(numId).textContent = '0';
+                } else {
+                    // Jika penyebut berubah dan bukan 0, pastikan pembilang tidak melebihi penyebut
+                    const numId = id.replace('den', 'num');
+                    const numeratorElement = document.getElementById(numId);
+                    const numerator = parseInt(numeratorElement.textContent);
+                    
+                    if (numerator > value) {
+                        numeratorElement.textContent = value;
+                    }
+                }
+            }
+            
+            element.textContent = value;
+            drawCircles();
+            checkAnswer();
+        }
+
+        function drawCircles() {
+            drawCircle('circle1', parseInt(document.getElementById('num1').textContent), 
+                       parseInt(document.getElementById('den1').textContent));
+            drawCircle('circle2', parseInt(document.getElementById('num2').textContent), 
+                       parseInt(document.getElementById('den2').textContent));
+        }
+
+        function drawCircle(svgId, numerator, denominator) {
+            const svg = document.getElementById(svgId);
+            svg.innerHTML = '';
+            
+            const centerX = 100;
+            const centerY = 100;
+            const radius = 90;
+            
+            // Gambar lingkaran luar
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', centerX);
+            circle.setAttribute('cy', centerY);
+            circle.setAttribute('r', radius);
+            circle.setAttribute('fill', 'none');
+            circle.setAttribute('stroke', '#e91e63');
+            circle.setAttribute('stroke-width', '3');
+            svg.appendChild(circle);
+            
+            // Jika penyebut 0, tidak gambar apa-apa lagi
+            if (denominator === 0) {
+                return;
+            }
+            
+            // Gambar garis pembagi
+            for (let i = 0; i < denominator; i++) {
+                const angle = (2 * Math.PI * i) / denominator;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', centerX);
+                line.setAttribute('y1', centerY);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#e91e63');
+                line.setAttribute('stroke-width', '2');
+                svg.appendChild(line);
+            }
+            
+            // Gambar bagian yang terisi
+            for (let i = 0; i < Math.min(numerator, denominator); i++) {
+                const startAngle = (2 * Math.PI * i) / denominator;
+                const endAngle = (2 * Math.PI * (i + 1)) / denominator;
+                
+                const x1 = centerX + radius * Math.cos(startAngle);
+                const y1 = centerY + radius * Math.sin(startAngle);
+                const x2 = centerX + radius * Math.cos(endAngle);
+                const y2 = centerY + radius * Math.sin(endAngle);
+                
+                const largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                path.setAttribute('d', d);
+                path.setAttribute('fill', '#ffe0b2');
+                path.setAttribute('stroke', '#e91e63');
+                path.setAttribute('stroke-width', '2');
+                svg.appendChild(path);
+            }
+        }
+
+        function selectComparison(symbol) {
+            selectedComparison = symbol;
+            
+            // Update tampilan tombol
+            const buttons = document.querySelectorAll('.comparison-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent.trim() === symbol) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            checkAnswer();
+        }
+
+        function checkAnswer() {
+            if (selectedComparison === null) {
+                return;
+            }
+            
+            const num1 = parseInt(document.getElementById('num1').textContent);
+            const den1 = parseInt(document.getElementById('den1').textContent);
+            const num2 = parseInt(document.getElementById('num2').textContent);
+            const den2 = parseInt(document.getElementById('den2').textContent);
+            
+            const feedback = document.getElementById('feedback');
+            
+            // Periksa apakah ada penyebut yang 0
+            if (den1 === 0 || den2 === 0) {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Penyebut tidak boleh nol! Silakan ubah nilai penyebut.';
+                return;
+            }
+            
+            const value1 = num1 / den1;
+            const value2 = num2 / den2;
+            
+            let correctComparison;
+            if (Math.abs(value1 - value2) < 0.0001) {
+                correctComparison = '=';
+            } else if (value1 < value2) {
+                correctComparison = '<';
+            } else {
+                correctComparison = '>';
+            }
+            
+            if (selectedComparison === correctComparison) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Benar! Jawaban Anda tepat!';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Coba lagi! Perhatikan bagian yang terisi pada lingkaran.';
+            }
+        }
+
+        function resetAll() {
+            // Reset nilai pecahan ke 0/0
+            document.getElementById('num1').textContent = '0';
+            document.getElementById('den1').textContent = '0';
+            document.getElementById('num2').textContent = '0';
+            document.getElementById('den2').textContent = '0';
+            
+            // Reset perbandingan yang dipilih
+            selectedComparison = null;
+            const buttons = document.querySelectorAll('.comparison-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Reset feedback
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback neutral';
+            feedback.textContent = 'Pilih tanda perbandingan yang tepat!';
+            
+            // Redraw circles
+            drawCircles();
+        }
+
+        // Inisialisasi
+        drawCircles();
+    </script>
+</body>
+</html>
