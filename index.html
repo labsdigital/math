@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pembelajaran Siswa</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FFC107;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --heading-color: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--heading-color);
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1em;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent-color);
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-background);
+            padding: 20px 0;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            font-size: 1.1em;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        .hero .btn-secondary {
+            background-color: var(--accent-color);
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.4);
+        }
+
+        .hero .btn-secondary:hover {
+            background-color: white;
+            color: var(--accent-color);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            filter: blur(30px);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(30px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card i {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: var(--heading-color);
+        }
+
+        /* Subjects Section */
+        .subjects {
+            padding: 60px 0;
+            background-color: #e8f5e9; /* Light green */
+            border-radius: var(--border-radius);
+            margin-top: 40px;
+        }
+
+        .subjects h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: var(--heading-color);
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .subject-card {
+            background-color: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .subject-card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            filter: invert(40%) sepia(90%) saturate(350%) hue-rotate(70deg) brightness(90%) contrast(90%); /* Green-ish filter */
+        }
+
+        .subject-card h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .subject-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        .testimonial-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .testimonial-item {
+            display: none; /* Initially hidden, managed by JS */
+            padding: 30px;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .testimonial-item.active {
+            display: block;
+        }
+
+        .testimonial-item p {
+            font-size: 1.2em;
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .testimonial-item .author {
+            font-weight: bold;
+            color: var(--heading-color);
+            font-size: 1.1em;
+        }
+
+        .testimonial-item .author span {
+            font-weight: normal;
+            color: #777;
+            font-size: 0.95em;
+        }
+
+        .testimonial-nav {
+            margin-top: 30px;
+        }
+
+        .testimonial-nav button {
+            background-color: rgba(76, 175, 80, 0.7);
+            margin: 0 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            box-shadow: none;
+        }
+
+        .testimonial-nav button:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* CTA Section */
+        .cta {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .cta h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .cta p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .cta button {
+            background-color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .cta button:hover {
+            background-color: white;
+            color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--heading-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .footer-links ul li {
+            margin: 5px 0;
+        }
+
+        .footer-links ul li a {
+            color: #bbb;
+        }
+
+        .footer-links ul li a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .social-icons a {
+            color: #bbb;
+            font-size: 1.5em;
+            margin: 0 10px;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            width: 100%;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px; /* Height of header */
+                left: 0;
+                width: 100%;
+                background-color: var(--card-background);
+                padding: 20px 0;
+                box-shadow: var(--box-shadow);
+                z-index: 999;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 10px 20px;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .features-grid, .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card, .subject-card, .testimonial-item {
+                margin: 10px;
+            }
+
+            footer .container {
+                flex-direction: column;
+            }
+
+            .footer-links {
+                margin-bottom: 20px;
+            }
+
+            .logo {
+                font-size: 1.5em;
+            }
+
+            header .container {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Font Awesome Icons */
+        /* For simplicity, you'd link Font Awesome CSS externally in a real app.
+           Here we assume it's available or you'd replace with SVGs/other icons. */
+        /* Example: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> */
+        /* For this single file demo, we'll use placeholder text or you can imagine icons.
+           For actual rendering, include the Font Awesome CDN link in <head>.
+           Using placeholder text here for demonstration without external assets. */
+        .icon-placeholder {
+            display: inline-block;
+            width: 40px; height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            color: white;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+    </style>
+    <!-- In a real app, link Font Awesome like this: -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">EduLearn</div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Beranda</a></li>
+                    <li><a href="#features">Fitur</a></li>
+                    <li><a href="#subjects">Mata Pelajaran</a></li>
+                    <li><a href="#testimonials">Testimoni</a></li>
+                    <li><a href="#contact">Kontak</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">☰</div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h1>Mulai Perjalanan Belajar Anda</h1>
+                <p>Akses materi pelajaran, latihan soal, dan pantau progres belajar Anda dengan mudah.</p>
+                <button class="btn-secondary">Mulai Belajar Sekarang</button>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Mengapa Memilih EduLearn?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <!-- <i class="fas fa-chalkboard-teacher"></i> -->
+                        <span class="icon-placeholder">T</span>
+                        <h3>Materi Komprehensif</h3>
+                        <p>Jelajahi berbagai topik dengan penjelasan yang mudah dipahami dan relevan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <!-- <i class="fas fa-question-circle"></i> -->
+                        <span class="icon-placeholder">L</span>
+                        <h3>Latihan Soal Interaktif</h3>
+                        <p>Asah pemahaman Anda dengan kuis dan latihan soal yang bervariasi.</p>
+                    </div>
+                    <div class="feature-card">
+                        <!-- <i class="fas fa-chart-line"></i> -->
+                        <span class="icon-placeholder">P</span>
+                        <h3>Pelacakan Progres</h3>
+                        <p>Pantau kemajuan belajar Anda secara visual dan identifikasi area yang perlu ditingkatkan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <!-- <i class="fas fa-users"></i> -->
+                        <span class="icon-placeholder">B</span>
+                        <h3>Komunitas Belajar</h3>
+                        <p>Bergabung dengan siswa lain, berbagi pengetahuan, dan saling memotivasi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="subjects" class="subjects">
+            <div class="container">
+                <h2>Pilih Mata Pelajaran Anda</h2>
+                <div class="subjects-grid">
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTggMTJIN2wxLjUtM2gtMTFMNyA4SDhMMTIgMTRIMTRWMThoNGMtMC43LTIuOS0zLTUtNi01em0tNS41IDdoLTEuN0wxMC41IDlIMTJhNy4xNyA3LjE3IDAgMDEtMi0xLjR6Ii8+PHBhdGggZD0iTTMgMTMuN0wxLjY3IDE4aDEyLjY2bDEuNjctNC4zM0gzLjMzem01LjEyIDEuNzNoNS43Nkw5LjUzIDE1em0xLjY2LTQuMjhoNi40N0wxOC4xNyA4SDkuODl6bTcuNzUgM2wtMS41IDNoLTExTDUuNTEgMTMuNzNoMTIuNjJ6bS0yLjAyLTIuN2gtNC40OEw5LjY3IDhoNS43N3oiLz48L3N2Zz4=" alt="Matematika Icon">
+                        <h3>Matematika</h3>
+                        <p>Aljabar, Geometri, Kalkulus</p>
+                    </div>
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTkgMTJjMC0zLjMxLTIuNjktNi02LTVIMTZWN2M1LjYyIDAgMTAtMy44MyAxMC04LjVIMjRjMC00LjY3LTMuMTMtOC41LTctOC41SDUuNjdDMS43OSAzIDAgNi44MyAwIDEyczEuNzkgNiA0IDZjMCA0LjQyIDMuNTggOC42NyA4LjY3IDguNjctMS4yNyAwLTIuNDEtLjI2LTMuNDktLjcyLTIuMTUtMS4xNy0zLjUtMy43NS0zLjUtNi40N3oiLz48L3N2Zz4=" alt="IPA Icon">
+                        <h3>Ilmu Pengetahuan Alam</h3>
+                        <p>Fisika, Kimia, Biologi</p>
+                    </div>
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTkgMThoLTZWMTRhMSAxIDAgMC0xLTJoLTJjLTEuMTEgMC0yLS44OS0yLTJWMTRoLTRjLS41NSAwLTEgLjQ1LTEgMXY0aC01Yy0uNTUgMC0xIC40NS0xIDF2NmgxNlYxOSBjMC0uNTUtLjQ1LTEgLTFWMTh6bS04LTVoMTBjLjU1IDAgMSAuNDUgMSAxVjIwaDIuNTYtLjAwMWMuMTMuMDAxLjI1Ni4wNTQuMzU0LjE1N2wxLjUyIDEuNDI0YzAgMCAwIC4wMDEuMDAxLjAwMWMuMTMuMTMuMTMuMzMuMTMuNTQuMTEuMzkuMjMuMTUuNjQuMTUuOTctLjEzLjQyLS4xOS43MS0uNTMuNzEtLjk4bC4wMi0xLjgyYzAtLjU1LjQ1LTEgMS0xSDIxVjE5aC0zLjQ0QzE2LjE4IDE2LjMgMTIgMTMuOTEgMTIgMTBhOC4yNSg4LjI1IDAgMSA4IDguMjUgOGwtLjA2LTdoLTkuODhaIi8+PC9zdmc+" alt="Bahasa Indonesia Icon">
+                        <h3>Bahasa Indonesia</h3>
+                        <p>Tata Bahasa, Sastra, Menulis</p>
+                    </div>
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTIgMGMtNi42MyAwLTEyIDUuMzctMTIgMTJzNS4zNyAxMiAxMiAxMmM2LjYzIDAgMTItNS4zNyAxMi0xMlMxOC42MyAwIDEyIDB6bTAgMjAuNWMtNC42NyAwLTguNS0zLjgzLTguNS04LjVzMy44My04LjUgOC41LTguNSA4LjUgMy44MyA4LjUgOC41LTMuODMgOC41LTguNSA4LjV6bS01LjctNy4yMWwxLjQxLTEuNDFjLjM5LS4zOSAxLjAyLS4zOSAxLjQxIDBsMi4xMiAyLjEyYzAuMzkuMzkuMzkgMS4wMiAwIDEuNDFsLTEuNDEgMS40MWMtLjM5LjM5LTEuMDIuMzktMS40MSAwTDUuNyAxMy43MXoiLz48L3N2Zz4=" alt="Bahasa Inggris Icon">
+                        <h3>Bahasa Inggris</h3>
+                        <p>Grammar, Vocabulary, Reading</p>
+                    </div>
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTYuNjcgMTAuNjVMMTIgMTUuMzRsLTQuNjctNC42OWgtMS42OGw2LjM0IDYuM0w5Ljk4IDE4YzAgMCA2LjQ2IDYuNTkgNi42MiA2LjUzLjQ0LjA3LjgzLjExIDEuMjYuMTEuODQgMCAxLjY3LS41MyAyLjMxLTEuNDFsMy4xOS00Ljk3Yy43OS0xLjIyLjM1LTIuODMtMS4xNS0zLjk4LTEuNDEtMS4xNS0zLjY1LTEuMTEuMTEuMDJ6bS01LjEgMS40MWwtNC42Ny00LjY5aC0xLjY4TDcuNSA5LjMzIDcuNSA1LjMzYy0xLjQ5LTEuMTUtMy43NC0xLjItNS4xNS0uMDRsLTMuMTcgNC45N2MtMS41IDEuMTUtMS45NCAyLjQ5LTEuMTUgMy45OC43OSAxLjIyIDEuOTUgMS41NSAzLjE1IDEuNDZsNS4xNC01LjE0em01LjE0LTQuODZsLTEuNDEtMS40MWMtLjM5LS4zOS0xLjAyLS4zOS0xLjQxIDBsLTEuNDEgMS40MWwyLjEyIDIgMjEyLTIuMTJ6Ii8+PC9zdmc+" alt="Sejarah Icon">
+                        <h3>Sejarah</h3>
+                        <p>Peradaban Kuno, Modern</p>
+                    </div>
+                    <div class="subject-card">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cGF0aCBkPSJNMTkgNDFoLTZWMjZoLTR2MTFoLTZ2LTdINjAuMDQzQzU3LjQxNyA0MS4xOSA1NS40MjMgNDMgNTMgNDNjMC04LjI4IDE1Ljc5LTguMjggMjAuOTU2IDBsLTEuMjcgMS40NGMuOTYtLjQ5IDEuOTctLjc4IDIuOTgtLjc4IDEuMzQgMCAyLjQ5LjY0IDMuMjMgMS42Ny42NS45NyAxLjM4IDEuODMgMS4zOCAyLjU3IDAgMS4zOS0xLjA3IDItMi40OCAyLjI4VjQxem01LjU1IDMuNzhsLTEuMjctMS40NC0xLjkyIDEuOTMtLjk2LS45NyAwIDIuODMtMS40NiAxLjU2YzAgMCAwIDMuMjggMCA0LjYxTDE4LjQgMjRsLTUuMDYgNS40NWMtLjgzLjgzLTEuODUuOC0yLjA2LjQ0LS4yMS0uNDEtLjE3LTEuMTYuMTctMS44TDkuMjIgMjRsMi4wNy0yLjI0IDEuNTYtMS41NmwtMS41Ni0xLjU2IDEuNTYtMS41NkwxOC4xOCAyNGwtLjYzLTUuMDVsMS41Ni0xLjU2ek0xNi4wOSAzM2wxLjUtMS41IDAgMy4yM0gxOC44bC0uNzEgMTAuMTRjMCAuNTUtLjQ1IDEgMSAxczEtLjQ1IDEuMTktLjU0TDIzIDMzLjQzYzAgMCAwLTkuODgtLjAxLTlIMTl2LTMuMTR6Ii8+PC9zdmc+" alt="Teknologi Icon">
+                        <h3>Teknologi</h3>
+                        <p>Dasar Komputer, AI</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <div class="container">
+                <h2>Apa Kata Mereka</h2>
+                <div class="testimonial-slider">
+                    <div class="testimonial-item active">
+                        <p>"Aplikasi ini sangat membantu saya memahami materi pelajaran yang sulit. Tampilannya bersih dan mudah digunakan."</p>
+                        <div class="author">Budi Santoso <span>Siswa SMA</span></div>
+                    </div>
+                    <div class="testimonial-item">
+                        <p>"Saya suka fitur latihan soalnya. Sangat efektif untuk persiapan ujian. Rekomendasi banget!"</p>
+                        <div class="author">Citra Lestari <span>Mahasiswa Semester 2</span></div>
+                    </div>
+                    <div class="testimonial-item">
+                        <p>"Antarmuka yang modern dan navigasi yang intuitif membuat belajar jadi lebih menyenangkan. Terima kasih EduLearn!"</p>
+                        <div class="author">Agus Wijaya <span>Siswa SMP</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-nav">
+                    <button onclick="changeTestimonial(-1)">&#10094;</button>
+                    <button onclick="changeTestimonial(1)">&#10093;</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="cta">
+            <div class="container">
+                <h2>Siap Meningkatkan Kualitas Belajar Anda?</h2>
+                <p>Bergabunglah dengan ribuan siswa lainnya dan raih prestasi akademik terbaik Anda.</p>
+                <button>Daftar Gratis</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">EduLearn</div>
+                <p>Membawa pembelajaran ke tingkat selanjutnya.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Tautan Cepat</h3>
+                <ul>
+                    <li><a href="#home">Beranda</a></li>
+                    <li><a href="#features">Fitur</a></li>
+                    <li><a href="#subjects">Mata Pelajaran</a></li>
+                    <li><a href="#testimonials">Testimoni</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Bantuan</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Kebijakan Privasi</a></li>
+                    <li><a href="#">Syarat Layanan</a></li>
+                </ul>
+            </div>
+            <div class="social-icons">
+                <h3>Ikuti Kami</h3>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <!-- Placeholder for Font Awesome icons -->
+                <span><a href="#" aria-label="Facebook">[F]</a></span>
+                <span><a href="#" aria-label="Twitter">[T]</a></span>
+                <span><a href="#" aria-label="Instagram">[IG]</a></span>
+                <span><a href="#" aria-label="LinkedIn">[Li]</a></span>
+            </div>
+            <div class="copyright">&copy; 2023 EduLearn. All Rights Reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Testimonial Slider Logic
+        let slideIndex = 0;
+        const testimonials = document.getElementsByClassName("testimonial-item");
+
+        function showTestimonials(index) {
+            if (index >= testimonials.length) {
+                slideIndex = 0;
+            } else if (index < 0) {
+                slideIndex = testimonials.length - 1;
+            } else {
+                slideIndex = index;
+            }
+
+            for (let i = 0; i < testimonials.length; i++) {
+                testimonials[i].style.display = "none";
+                testimonials[i].classList.remove("active");
+            }
+            testimonials[slideIndex].style.display = "block";
+            testimonials[slideIndex].classList.add("active");
+        }
+
+        function changeTestimonial(n) {
+            showTestimonials(slideIndex + n);
+        }
+
+        // Initial display
+        showTestimonials(slideIndex);
+
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navUl = document.querySelector('nav ul');
+
+        menuToggle.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked (optional)
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navUl.classList.contains('active')) {
+                    navUl.classList.remove('active');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
