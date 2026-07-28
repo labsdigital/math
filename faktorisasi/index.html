@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Algebra Tiles - Minimalist Edition</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --grid-size: 40px;
+            --bg-color: #f8fafc;
+            --grid-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            overflow: hidden; /* Prevent scrolling while dragging */
+            overscroll-behavior-y: none;
+        }
+
+        /* Workspace Grid Background */
+        .workspace-grid {
+            background-size: var(--grid-size) var(--grid-size);
+            background-image:
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-position: 0 0;
+        }
+
+        /* Tile Base Styling */
+        .tile {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+            touch-action: none; /* Prevent browser handling of touch gestures on tiles */
+        }
+
+        /* Tile States */
+        .tile:active, .tile.dragging {
+            cursor: grabbing;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transform: scale(1.02);
+            z-index: 1000 !important;
+            opacity: 0.9;
+        }
+
+        /* Tile Dimensions (Base = 40px) */
+        .tile-x2 { width: calc(var(--grid-size) * 4); height: calc(var(--grid-size) * 4); font-size: 1.5rem; }
+        .tile-x  { width: var(--grid-size); height: calc(var(--grid-size) * 4); }
+        .tile-x.rotated { width: calc(var(--grid-size) * 4); height: var(--grid-size); }
+        .tile-1  { width: var(--grid-size); height: var(--grid-size); }
+
+        /* Smooth Transition specifically for rotation */
+        .tile-x {
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), height 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        /* Modern Gradients for Tiles */
+        .pos-x2 { background: linear-gradient(135deg, #60a5fa, #3b82f6); } /* Blue */
+        .neg-x2 { background: linear-gradient(135deg, #f87171, #ef4444); } /* Red */
+        .pos-x  { background: linear-gradient(135deg, #34d399, #10b981); } /* Emerald */
+        .neg-x  { background: linear-gradient(135deg, #f87171, #ef4444); } /* Red */
+        .pos-1  { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #451a03; } /* Amber */
+        .neg-1  { background: linear-gradient(135deg, #f87171, #ef4444); } /* Red */
+
+        /* Custom Scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Sidebar Collapse Animations */
+        @media (min-width: 768px) {
+            .sidebar.collapsed {
+                margin-left: -20rem; /* Sesuai dengan lebar md:w-80 (20rem) */
+                opacity: 0;
+                visibility: hidden;
+            }
+            /* Sembunyikan tombol floating jika sidebar sedang terbuka */
+            #sidebar:not(.collapsed) + #workspace #menuToggleBtn {
+                opacity: 0;
+                pointer-events: none;
+                transform: translateX(-20px) scale(0.9);
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .sidebar {
+                max-height: 100vh;
+            }
+            .sidebar.collapsed {
+                max-height: 0;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                margin-bottom: 0 !important;
+                opacity: 0;
+                border: none;
+                visibility: hidden;
+            }
+            /* Sembunyikan tombol floating jika sidebar sedang terbuka (Mobile) */
+            #sidebar:not(.collapsed) + #workspace #menuToggleBtn {
+                opacity: 0;
+                pointer-events: none;
+                transform: translateY(-20px) scale(0.9);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-screen w-full flex flex-col md:flex-row text-slate-800">
+
+    <!-- Sidebar / Control Panel -->
+    <aside id="sidebar" class="sidebar w-full md:w-80 bg-white/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col gap-6 shadow-2xl z-10 overflow-y-auto shrink-0 transition-all duration-300">
+        
+        <!-- Header -->
+        <div class="mb-2 flex justify-between items-start">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Faktorisasi Persamaan dengan Algebra Tiles</h1>
+                <p class="text-sm text-slate-500 mt-1 font-medium">Manipulasi Kuadrat & Faktor</p>
+            </div>
+            <!-- Minimize Button (Desktop) -->
+            <button onclick="toggleSidebar()" class="p-1.5 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-200 rounded-md transition-colors hidden md:block" title="Sembunyikan Panel">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <!-- Minimize Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="p-1.5 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-200 rounded-md transition-colors md:hidden" title="Sembunyikan Panel">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+        </div>
+
+        <!-- Tool Box -->
+        <div class="flex flex-col gap-3">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tambah Ubin</h2>
+            
+            <button onclick="addTile('x2', 1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-blue-700">+ x²</span>
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-400 to-blue-500 shadow-inner"></div>
+            </button>
+
+            <button onclick="addTile('x2', -1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-red-700">- x²</span>
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-red-400 to-red-500 shadow-inner"></div>
+            </button>
+
+            <button onclick="addTile('x', 1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-emerald-700">+ x</span>
+                <div class="w-3 h-8 rounded bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-inner"></div>
+            </button>
+
+            <button onclick="addTile('x', -1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-red-700">- x</span>
+                <div class="w-3 h-8 rounded bg-gradient-to-br from-red-400 to-red-500 shadow-inner"></div>
+            </button>
+
+            <button onclick="addTile('1', 1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-amber-700">+ 1</span>
+                <div class="w-4 h-4 rounded bg-gradient-to-br from-amber-300 to-amber-400 shadow-inner"></div>
+            </button>
+
+            <button onclick="addTile('1', -1)" class="group flex items-center justify-between p-3 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow">
+                <span class="font-semibold text-slate-700 group-hover:text-red-700">- 1</span>
+                <div class="w-4 h-4 rounded bg-gradient-to-br from-red-400 to-red-500 shadow-inner"></div>
+            </button>
+        </div>
+
+        <div class="mt-auto pt-6 border-t border-slate-200 flex flex-col gap-4">
+            <button onclick="clearWorkspace()" class="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                Bersihkan Papan
+            </button>
+
+            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-sm text-slate-600">
+                <ul class="space-y-2">
+                    <li class="flex gap-2"><span class="text-blue-500 font-bold">●</span> Seret ubin ke area kerja.</li>
+                    <li class="flex gap-2"><span class="text-blue-500 font-bold">●</span> <b>Klik ganda</b> ubin <i>x</i> untuk memutarnya.</li>
+                    <li class="flex gap-2"><span class="text-blue-500 font-bold">●</span> <b>Klik kanan</b> (atau tahan lama di HP) untuk menghapus ubin.</li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Workspace -->
+    <main class="flex-1 relative workspace-grid w-full h-full" id="workspace">
+        
+        <!-- Toggle Menu Button (Floating in Workspace) -->
+        <button id="menuToggleBtn" onclick="toggleSidebar()" class="absolute top-4 left-4 z-50 p-2.5 bg-white/90 backdrop-blur-md shadow-sm border border-slate-200 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-white hover:shadow transition-all duration-300 group" title="Tampilkan Panel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <!-- Tiles will be appended here via JS -->
+    </main>
+
+    <script>
+        const workspace = document.getElementById('workspace');
+        const GRID_SIZE = 40; // Must match CSS --grid-size
+        let zIndexCounter = 10;
+
+        /**
+         * Toggles the sidebar visibility
+         */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        /**
+         * Adds a new tile to the center-ish of the workspace
+         */
+        function addTile(type, sign) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile', `tile-${type}`);
+            
+            // Apply color class based on sign
+            const signStr = sign === 1 ? 'pos' : 'neg';
+            tile.classList.add(`${signStr}-${type}`);
+            
+            // Format Label (Support for Superscript)
+            let label = type === 'x2' ? 'x²' : type;
+            if (sign === -1) label = '-' + label;
+            tile.innerText = label;
+
+            // Calculate starting position (centered relative to viewport size)
+            const wsRect = workspace.getBoundingClientRect();
+            // Start roughly in the middle, slightly offset by random to avoid exact stacking
+            const randomOffset = Math.floor(Math.random() * 3) * GRID_SIZE; 
+            let startX = Math.round((wsRect.width / 2 - GRID_SIZE) / GRID_SIZE) * GRID_SIZE + randomOffset;
+            let startY = Math.round((wsRect.height / 2 - GRID_SIZE*2) / GRID_SIZE) * GRID_SIZE + randomOffset;
+            
+            // Bound checks
+            startX = Math.max(0, startX);
+            startY = Math.max(0, startY);
+
+            tile.style.left = `${startX}px`;
+            tile.style.top = `${startY}px`;
+            tile.style.zIndex = zIndexCounter++;
+
+            // Handle Rotation for 'x' tiles via Double Click
+            if (type === 'x') {
+                tile.addEventListener('dblclick', (e) => {
+                    e.preventDefault();
+                    tile.classList.toggle('rotated');
+                    
+                    // Re-snap to grid after rotation to keep alignment perfect
+                    setTimeout(() => {
+                        let currentLeft = parseInt(tile.style.left);
+                        let currentTop = parseInt(tile.style.top);
+                        tile.style.left = `${Math.round(currentLeft / GRID_SIZE) * GRID_SIZE}px`;
+                        tile.style.top = `${Math.round(currentTop / GRID_SIZE) * GRID_SIZE}px`;
+                    }, 50); // slight delay to allow CSS transition to process
+                });
+            }
+
+            // Remove on Right Click
+            tile.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                removeTileWithAnimation(tile);
+            });
+
+            // Initialize Dragging (Mouse & Touch)
+            makeDraggable(tile);
+            
+            // Add initial pop-in animation
+            tile.style.transform = 'scale(0)';
+            workspace.appendChild(tile);
+            requestAnimationFrame(() => {
+                tile.style.transform = 'scale(1)';
+            });
+        }
+
+        /**
+         * Clears all tiles with a nice fade out effect
+         */
+        function clearWorkspace() {
+            const tiles = workspace.querySelectorAll('.tile');
+            tiles.forEach(tile => {
+                removeTileWithAnimation(tile);
+            });
+            setTimeout(() => {
+                zIndexCounter = 10;
+            }, 300);
+        }
+
+        function removeTileWithAnimation(tile) {
+            tile.style.transform = 'scale(0)';
+            tile.style.opacity = '0';
+            setTimeout(() => {
+                if(tile.parentElement === workspace) {
+                    workspace.removeChild(tile);
+                }
+            }, 150); // matches CSS transition duration roughly
+        }
+
+        /**
+         * Handles complex drag and drop logic including snap-to-grid
+         * Supports both Mouse and Touch events
+         */
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+            
+            // Variables for long press detection (mobile deletion)
+            let pressTimer;
+
+            const startDrag = (e) => {
+                if (e.type === 'mousedown' && e.button !== 0) return; // Only left click
+                
+                isDragging = true;
+                element.classList.add('dragging');
+                element.style.zIndex = zIndexCounter++;
+
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+                startX = clientX;
+                startY = clientY;
+                initialLeft = element.offsetLeft;
+                initialTop = element.offsetTop;
+
+                // Long press for touch devices to simulate right-click delete
+                if(e.type === 'touchstart') {
+                    pressTimer = setTimeout(() => {
+                        if (isDragging) {
+                            isDragging = false;
+                            removeTileWithAnimation(element);
+                        }
+                    }, 800); // 800ms long press
+                }
+            };
+
+            const doDrag = (e) => {
+                if (!isDragging) return;
+                
+                // Clear long press timer if user starts moving
+                clearTimeout(pressTimer);
+
+                // Prevent scrolling on touch while dragging
+                if(e.type === 'touchmove') e.preventDefault(); 
+
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                
+                let dx = clientX - startX;
+                let dy = clientY - startY;
+                
+                // Continuous Snap-to-Grid Algorithm
+                let newLeft = Math.round((initialLeft + dx) / GRID_SIZE) * GRID_SIZE;
+                let newTop = Math.round((initialTop + dy) / GRID_SIZE) * GRID_SIZE;
+
+                // Simple boundaries to prevent dragging completely out of view
+                newLeft = Math.max(0, newLeft);
+                newTop = Math.max(0, newTop);
+
+                element.style.left = `${newLeft}px`;
+                element.style.top = `${newTop}px`;
+            };
+
+            const endDrag = () => {
+                isDragging = false;
+                element.classList.remove('dragging');
+                clearTimeout(pressTimer);
+            };
+
+            // Mouse Events
+            element.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', doDrag);
+            document.addEventListener('mouseup', endDrag);
+            
+            // Touch Events (Mobile/Tablet Support)
+            element.addEventListener('touchstart', startDrag, { passive: false });
+            document.addEventListener('touchmove', doDrag, { passive: false });
+            document.addEventListener('touchend', endDrag);
+            document.addEventListener('touchcancel', endDrag);
+        }
+    </script>
+</body>
+</html>
