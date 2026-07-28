@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktorisasi Kuadratika & Algebra Tiles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .tile-x2 { width: 100px; height: 100px; background-color: #3b82f6; border: 2px solid #2563eb; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 4px; }
+        .tile-x { width: 30px; height: 100px; background-color: #22c55e; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 4px; }
+        .tile-x-horizontal { width: 100px; height: 30px; background-color: #22c55e; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 4px; }
+        .tile-1 { width: 30px; height: 30px; background-color: #eab308; border: 2px solid #ca8a04; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 4px; }
+        
+        /* Ubin Negatif */
+        .tile-x2.negative { background-color: #ef4444; border-color: #dc2626; }
+        .tile-x.negative, .tile-x-horizontal.negative { background-color: #ef4444; border-color: #dc2626; }
+        .tile-1.negative { background-color: #ef4444; border-color: #dc2626; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { border-bottom: 4px solid #3b82f6; color: #3b82f6; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                Faktorisasi Kuadratika Edu-AI
+            </h1>
+        </div>
+    </header>
+
+    <nav class="bg-white shadow max-w-5xl mx-auto mt-4 rounded-t-lg flex overflow-x-auto">
+        <button class="tab-btn active px-6 py-3 hover:bg-gray-50 whitespace-nowrap" onclick="switchTab('konsep')">Konsep & Filosofi</button>
+        <button class="tab-btn px-6 py-3 hover:bg-gray-50 whitespace-nowrap" onclick="switchTab('simulator')">Visualisator Ubin</button>
+        <button class="tab-btn px-6 py-3 hover:bg-gray-50 whitespace-nowrap" onclick="switchTab('kasus')">5 Studi Kasus</button>
+    </nav>
+
+    <main class="max-w-5xl mx-auto bg-white p-6 shadow-md rounded-b-lg mb-10 min-h-[600px]">
+        
+        <!-- TAB KONSEP & FILOSOFI -->
+        <section id="konsep" class="tab-content active space-y-8">
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r">
+                <h2 class="text-xl font-bold text-blue-700 mb-2">Mengapa Belajar Faktorisasi? (Motivasi)</h2>
+                <p class="mb-2">Matematika bukan sekadar menghafal rumus. Faktorisasi adalah alat utama yang digunakan oleh para ilmuwan dan insinyur untuk menyelesaikan masalah yang kompleks (optimasi). Kegunaan nyatanya meliputi:</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Arsitektur & Sipil:</strong> Menghitung dimensi pasti dari sebuah lahan, jembatan, atau ruangan berdasarkan luas total yang direncanakan.</li>
+                    <li><strong>Fisika (Gerak Parabola):</strong> Memprediksi kapan sebuah benda (seperti roket atau bola) akan menyentuh tanah ($y=0$).</li>
+                    <li><strong>Ekonomi:</strong> Mencari titik impas (Break-Even Point) di mana kurva biaya produksi dan pendapatan bertemu.</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold border-b pb-2 mb-4">Filosofi Fundamental: Dari Umum ke Visual</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">1. Definisi Universal</h3>
+                        <p class="mb-2">Secara filosofis, <strong>memfaktorkan</strong> adalah proses "dekonstruksi" atau memecah entitas yang kompleks menjadi blok-blok penyusun dasarnya.</p>
+                        <p class="mb-2">Sama seperti angka 12 dapat dipecah menjadi faktor dasarnya: $3 \times 4$. Dalam aljabar, kita memecah ekspresi luas (polinomial penjumlahan) menjadi komponen <strong>panjang dikali lebar</strong>.</p>
+                        <p class="bg-gray-100 p-3 rounded">$$x^2 + 5x + 6 \rightarrow (x + 3)(x + 2)$$<br><span class="text-sm text-gray-600">Polinomial $\rightarrow$ Faktor Penyusun</span></p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">2. Transisi ke Peraga Ubin (Algebra Tiles)</h3>
+                        <p class="mb-2">Otak manusia lebih mudah memproses bentuk visual daripada simbol abstrak. <em>Algebra Tiles</em> menerjemahkan simbol abstrak menjadi bentuk geometri (Luas).</p>
+                        <p class="mb-2"><strong>Aturan Mainnya (Membangun Persegi Panjang):</strong> Jika diberikan $x^2 + 5x + 6$, kumpulkan 1 ubin besar ($x^2$), 5 ubin persegi panjang ($x$), dan 6 ubin kecil ($1$). Tugas utamanya adalah menyusun semua kepingan tersebut menjadi satu <strong>Persegi Panjang Sempurna</strong> tanpa celah. Panjang dan lebar hasil susunan tersebut adalah faktornya!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-bold mb-4">Jenis-Jenis Ubin Aljabar</h2>
+                <div class="flex flex-wrap gap-6 items-end">
+                    <div class="text-center"><div class="tile-x2 mx-auto mb-2">x²</div><span><strong>Ubin x²</strong> (Positif)</span></div>
+                    <div class="text-center"><div class="tile-x mx-auto mb-2">x</div><span><strong>Ubin x</strong> (Positif)</span></div>
+                    <div class="text-center"><div class="tile-1 mx-auto mb-2">1</div><span><strong>Ubin 1</strong> (Positif)</span></div>
+                    
+                    <div class="border-l-2 pl-6 text-center">
+                        <div class="tile-x2 negative mx-auto mb-2">-x²</div>
+                        <span><strong>Ubin -x²</strong> (Negatif)</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="tile-x negative mx-auto mb-2">-x</div>
+                        <span><strong>Ubin -x</strong> (Negatif)</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="tile-1 negative mx-auto mb-2">-1</div>
+                        <span><strong>Ubin -1</strong> (Negatif)</span>
+                    </div>
+                </div>
+                <p class="mt-4 text-sm text-gray-600 bg-red-50 p-3 rounded border border-red-200"><strong>Catatan Ubin Merah:</strong> Digunakan untuk merepresentasikan nilai koefisien yang minus (negatif). Ubin merah dan ubin hijau/biru dengan ukuran yang sama akan saling meniadakan (Zero Pairs) jika digabungkan.</p>
+            </div>
+        </section>
+
+        <!-- TAB SIMULATOR -->
+        <section id="simulator" class="tab-content">
+            <h2 class="text-2xl font-bold mb-2">Simulator Algebra Tiles</h2>
+            <p class="mb-6 text-gray-600">Pilih persamaan kuadrat (termasuk yang menggunakan -x²), lalu klik "Susun Ubin" untuk melihat visualisasinya.</p>
+            
+            <div class="flex gap-4 mb-6 items-center bg-gray-100 p-4 rounded-lg">
+                <label class="font-bold">Pilih Persamaan:</label>
+                <select id="simSelect" class="border p-2 rounded flex-1">
+                    <option value="1,3,2">x² + 3x + 2</option>
+                    <option value="1,5,6">x² + 5x + 6</option>
+                    <option value="1,-1,-6">x² - x - 6</option>
+                    <option value="-1,-2,3">-x² - 2x + 3</option>
+                    <option value="-1,1,2">-x² + x + 2</option>
+                </select>
+                <button onclick="renderSimulator()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-bold transition">Susun Ubin</button>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-bold mb-4 text-center">Bahan Ubin Mentah</h3>
+                    <div id="rawTiles" class="flex flex-wrap gap-2 justify-center">
+                        <!-- Ubin mentah dirender di sini -->
+                    </div>
+                </div>
+                <div class="border p-4 rounded-lg bg-gray-50 relative min-h-[300px] flex items-center justify-center">
+                    <h3 class="font-bold absolute top-4 left-4">Hasil Susunan</h3>
+                    <div id="arrangedContainer" class="flex flex-col items-start mt-8">
+                        <!-- Susunan matriks dirender di sini -->
+                    </div>
+                    <div id="simFactors" class="absolute bottom-4 right-4 bg-white px-4 py-2 border rounded shadow font-bold text-blue-700">
+                        Panjang & Lebar: ?
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB STUDI KASUS -->
+        <section id="kasus" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">5 Studi Kasus Nyata</h2>
+            <div class="flex gap-4 mb-6 overflow-x-auto pb-2 border-b">
+                <button class="case-btn bg-blue-100 text-blue-700 font-bold px-4 py-2 rounded" onclick="loadCase(0)">1. Kolam Renang</button>
+                <button class="case-btn bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200" onclick="loadCase(1)">2. Taman Kota</button>
+                <button class="case-btn bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200" onclick="loadCase(2)">3. Panel Surya</button>
+                <button class="case-btn bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200" onclick="loadCase(3)">4. Pameran Seni</button>
+                <button class="case-btn bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200" onclick="loadCase(4)">5. Lahan Tani</button>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 id="caseTitle" class="text-xl font-bold mb-4 text-blue-800">Kasus 1: Merancang Kolam Renang</h3>
+                <p id="caseDesc" class="mb-4">Pemerintah desa ingin membangun sebuah kolam renang umum. Luas total area (termasuk pinggiran) mengikuti persamaan luas: $x^2 + 8x + 15$ meter persegi. Tentukan panjang dan lebar aljabarnya untuk kontraktor!</p>
+                <div class="bg-white p-4 rounded shadow-sm inline-block">
+                    <div class="mb-2 font-mono bg-gray-100 p-2 text-center rounded font-bold" id="caseEquation">x² + 8x + 15</div>
+                    <div class="flex gap-4 items-center">
+                        <div>
+                            <label class="block text-sm">Faktor 1 (Misal: x + 3 ketik 3)</label>
+                            <input type="number" id="ans1" class="border p-2 rounded w-32" placeholder="Angka">
+                        </div>
+                        <div>
+                            <label class="block text-sm">Faktor 2</label>
+                            <input type="number" id="ans2" class="border p-2 rounded w-32" placeholder="Angka">
+                        </div>
+                        <button onclick="checkCase()" class="bg-green-600 text-white px-4 py-2 mt-5 rounded font-bold hover:bg-green-700">Cek</button>
+                    </div>
+                    <p id="caseFeedback" class="mt-3 font-bold"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'border-blue-500'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- SIMULATOR LOGIC ---
+        function renderSimulator() {
+            const val = document.getElementById('simSelect').value.split(',').map(Number);
+            const a = val[0], b = val[1], c = val[2];
+            
+            const rawContainer = document.getElementById('rawTiles');
+            const arrContainer = document.getElementById('arrangedContainer');
+            const factorText = document.getElementById('simFactors');
+            
+            rawContainer.innerHTML = '';
+            arrContainer.innerHTML = '';
+
+            // Render Raw Tiles
+            // x^2 tile
+            let isX2Neg = a < 0;
+            rawContainer.innerHTML += `<div class="tile-x2 ${isX2Neg ? 'negative' : ''}">${isX2Neg ? '-x²' : 'x²'}</div>`;
+            
+            // x tiles
+            for(let i=0; i<Math.abs(b); i++) {
+                rawContainer.innerHTML += `<div class="tile-x ${b < 0 ? 'negative' : ''}">${b < 0 ? '-x' : 'x'}</div>`;
+            }
+            
+            // 1 tiles
+            for(let i=0; i<Math.abs(c); i++) {
+                rawContainer.innerHTML += `<div class="tile-1 ${c < 0 ? 'negative' : ''}">${c < 0 ? '-1' : '1'}</div>`;
+            }
+
+            // Find factors logic (simple brute force for simulator purposes based on p+q=b/a, p*q=c/a)
+            // Khusus a=-1, kita faktorkan -1 nya dulu. Misal -x^2 -2x + 3 -> -(x^2 + 2x - 3) -> -(x+3)(x-1) -> (3-x)(x+1) atau (-x-3)(x-1)
+            let p = 0, q = 0;
+            let found = false;
+            let tempA = a, tempB = b, tempC = c;
+            
+            if (a === -1) { tempB = -b; tempC = -c; }
+
+            for (let i = -20; i <= 20; i++) {
+                for (let j = -20; j <= 20; j++) {
+                    if (i + j === tempB && i * j === tempC) {
+                        p = i; q = j; found = true; break;
+                    }
+                }
+                if (found) break;
+            }
+
+            if (!found) { factorText.innerText = "Tidak dapat difaktorkan secara rasional"; return; }
+
+            // MathJax display update
+            let eqStr = `${a===1?'x^2':(a===-1?'-x^2':a+'x^2')} ${b>=0?'+ '+b:'- '+Math.abs(b)}x ${c>=0?'+ '+c:'- '+Math.abs(c)}`;
+            let f1 = a === -1 ? `(-x ${p>=0?'+ '+p:'- '+Math.abs(p)})` : `(x ${p>=0?'+ '+p:'- '+Math.abs(p)})`;
+            let f2 = `(x ${q>=0?'+ '+q:'- '+Math.abs(q)})`;
+            factorText.innerText = `Faktor: ${f1}${f2}`;
+            
+            // Render Arranged (Simplified Visualizer Layout)
+            // Row 1: x^2 and q horizontal x tiles
+            let row1 = document.createElement('div');
+            row1.className = 'flex';
+            row1.innerHTML += `<div class="tile-x2 ${a < 0 ? 'negative' : ''}">${a < 0 ? '-x²' : 'x²'}</div>`;
+            for(let i=0; i<Math.abs(q); i++) {
+                // If a is -1, the horizontal x tiles flip sign based on q
+                let isNeg = a === -1 ? (-q < 0) : (q < 0);
+                row1.innerHTML += `<div class="tile-x ${isNeg ? 'negative' : ''}">${isNeg ? '-x' : 'x'}</div>`;
+            }
+            arrContainer.appendChild(row1);
+
+            // Row 2 to P: vertical x tiles and 1 tiles
+            for(let j=0; j<Math.abs(p); j++) {
+                let rowP = document.createElement('div');
+                rowP.className = 'flex';
+                let pIsNeg = a === -1 ? (-p < 0) : (p < 0);
+                rowP.innerHTML += `<div class="tile-x-horizontal ${pIsNeg ? 'negative' : ''}">${pIsNeg ? '-x' : 'x'}</div>`;
+                
+                for(let i=0; i<Math.abs(q); i++) {
+                    // Sign of 1s depends on combination of signs
+                    let onesSign = c < 0; 
+                    rowP.innerHTML += `<div class="tile-1 ${onesSign ? 'negative' : ''}">${onesSign ? '-1' : '1'}</div>`;
+                }
+                arrContainer.appendChild(rowP);
+            }
+            MathJax.typeset();
+        }
+
+        // --- STUDI KASUS LOGIC ---
+        const cases = [
+            { 
+                title: "Merancang Kolam Renang", 
+                desc: "Pemerintah desa ingin membangun sebuah kolam renang umum. Luas total area (termasuk pinggiran) mengikuti persamaan luas: $x^2 + 8x + 15$ meter persegi. Tentukan panjang dan lebar aljabarnya untuk kontraktor!", 
+                eq: "x² + 8x + 15", p: 3, q: 5 
+            },
+            { 
+                title: "Desain Taman Kota", 
+                desc: "Dinas tata ruang mengalokasikan area hijau kota yang ditengahnya terdapat kolam. Sisa luas taman rumputnya dimodelkan dengan $x^2 + 2x - 8$. Tentukan faktor panjang dan lebarnya!", 
+                eq: "x² + 2x - 8", p: -2, q: 4 
+            },
+            { 
+                title: "Pembuatan Panel Surya", 
+                desc: "Insinyur energi merancang panel surya lipat. Agar efisiensinya maksimal, luas permukaannya diatur menggunakan persamaan luasan $x^2 - 7x + 12$. Tentukan dua bilangan pembentuk dimensinya!", 
+                eq: "x² - 7x + 12", p: -3, q: -4 
+            },
+            { 
+                title: "Tata Ruang Pameran Seni", 
+                desc: "Galeri seni ingin memaksimalkan area pajang karya. Susunan dinding partisi membentuk ruang dengan fungsi luasan area $x^2 - 4x - 5$. Hitung ukuran faktor partisinya!", 
+                eq: "x² - 4x - 5", p: 1, q: -5 
+            },
+            { 
+                title: "Pembagian Area Pertanian", 
+                desc: "Kelompok tani membagi lahan trapesium yang dikuadratkan sedemikian rupa sehingga blok yang ditanami padi luasnya $x^2 + 10x + 24$. Berapakah faktor ukurannya?", 
+                eq: "x² + 10x + 24", p: 4, q: 6 
+            }
+        ];
+
+        let currentCaseIdx = 0;
+
+        function loadCase(idx) {
+            currentCaseIdx = idx;
+            document.querySelectorAll('.case-btn').forEach((btn, i) => {
+                btn.className = i === idx 
+                    ? "case-btn bg-blue-100 text-blue-700 font-bold px-4 py-2 rounded" 
+                    : "case-btn bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200";
+            });
+
+            document.getElementById('caseTitle').innerText = `Kasus ${idx + 1}: ${cases[idx].title}`;
+            document.getElementById('caseDesc').innerHTML = cases[idx].desc;
+            document.getElementById('caseEquation').innerText = cases[idx].eq;
+            
+            document.getElementById('ans1').value = '';
+            document.getElementById('ans2').value = '';
+            document.getElementById('caseFeedback').innerText = '';
+            MathJax.typeset();
+        }
+
+        function checkCase() {
+            const v1 = parseInt(document.getElementById('ans1').value);
+            const v2 = parseInt(document.getElementById('ans2').value);
+            const cur = cases[currentCaseIdx];
+            const fb = document.getElementById('caseFeedback');
+
+            if (isNaN(v1) || isNaN(v2)) {
+                fb.innerText = "Masukkan angka di kedua kotak!";
+                fb.className = "mt-3 font-bold text-red-600";
+                return;
+            }
+
+            if ((v1 === cur.p && v2 === cur.q) || (v1 === cur.q && v2 === cur.p)) {
+                fb.innerText = "Tepat Sekali! Analisis dimensinya benar. ✅";
+                fb.className = "mt-3 font-bold text-green-600";
+            } else {
+                fb.innerText = "Masih kurang tepat, coba hitung lagi p+q dan p×q nya. ❌";
+                fb.className = "mt-3 font-bold text-red-600";
+            }
+        }
+
+        // Initialize Simulator on load
+        window.onload = () => {
+            renderSimulator();
+        };
+    </script>
+</body>
+</html>
