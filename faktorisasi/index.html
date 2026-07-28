@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Faktorisasi Kuadrat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <!-- Konfigurasi MathJax Ditambahkan Di Sini -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        startup: {
+            pageReady: () => {
+                return MathJax.startup.defaultPageReady();
+            }
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-light: #EEF2FF;
+            --secondary: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            
+            /* Warna Algebra Tiles */
+            --tile-x2: #3B82F6; /* Biru besar */
+            --tile-x: #10B981;  /* Hijau panjang */
+            --tile-1: #F59E0B;  /* Kuning kecil */
+            --tile-neg: #EF4444; /* Merah untuk negatif (opsional di materi ini) */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #312E81);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .gamification-stats {
+            display: flex;
+            gap: 15px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-item.streak { color: #FCD34D; }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        nav::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 0.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { color: var(--primary); }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.5rem; }
+        h3 { color: var(--text-main); margin-bottom: 0.75rem; font-size: 1.2rem;}
+        p { margin-bottom: 1rem; }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-outline:hover { background: var(--primary-light); }
+
+        .tile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+            padding: 15px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+            min-height: 100px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* Base unit: 1 = 30px */
+        .tile {
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Misal sisi x panjangnya 3 kali sisi satuan */
+        .tile-x2 { width: 90px; height: 90px; background-color: var(--tile-x2); }
+        .tile-x-h { width: 90px; height: 30px; background-color: var(--tile-x); } /* Horizontal */
+        .tile-x-v { width: 30px; height: 90px; background-color: var(--tile-x); } /* Vertical */
+        .tile-1 { width: 30px; height: 30px; background-color: var(--tile-1); }
+        
+        /* Ubin Negatif */
+        .tile-neg-x2 { width: 90px; height: 90px; background-color: var(--tile-neg); }
+        .tile-neg-x-h { width: 90px; height: 30px; background-color: var(--tile-neg); }
+        .tile-neg-x-v { width: 30px; height: 90px; background-color: var(--tile-neg); }
+        .tile-neg-1 { width: 30px; height: 30px; background-color: var(--tile-neg); }
+
+        .grid-builder {
+            display: grid;
+            gap: 2px;
+            margin: 20px auto;
+            width: fit-content;
+            background: #e2e8f0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .quiz-option.correct {
+            background: #D1FAE5;
+            border-color: var(--secondary);
+            color: #065F46;
+        }
+
+        .quiz-option.wrong {
+            background: #FEE2E2;
+            border-color: var(--danger);
+            color: #991B1B;
+        }
+
+        .quiz-option:disabled { cursor: not-allowed; }
+
+        .feedback-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback-box.show { display: block; animation: fadeIn 0.3s; }
+        .feedback-correct { background: #D1FAE5; border-left: 4px solid var(--secondary); }
+        .feedback-wrong { background: #FEE2E2; border-left: 4px solid var(--danger); }
+
+        /* Game Area */
+        .game-area {
+            text-align: center;
+            padding: 2rem;
+            background: #1E293B;
+            border-radius: 12px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .timer-progress {
+            height: 100%;
+            background: var(--secondary);
+            width: 100%;
+            transition: width 0.1s linear, background-color 0.3s;
+        }
+
+        .equation-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            color: #FCD34D;
+            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .factors-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .factor-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .factor-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+            transform: scale(1.02);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            color: var(--text-main);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 5px solid;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: var(--secondary); }
+        .toast.error { border-left-color: var(--danger); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
+
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .modal-overlay.show .modal { transform: scale(1); }
+
+        .modal-icon { font-size: 4rem; color: var(--warning); margin-bottom: 1rem; }
+        
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; text-align: center; }
+            .factors-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <i class="fas fa-cubes"></i>
+            <span>Faktorisasi Kuadratika</span>
+        </div>
+        <div class="gamification-stats">
+            <div class="stat-item" title="Level">
+                <i class="fas fa-star"></i> <span id="ui-level">1</span>
+            </div>
+            <div class="stat-item streak" title="Streak Jawaban Benar">
+                <i class="fas fa-fire"></i> <span id="ui-streak">0</span>
+            </div>
+            <div class="stat-item" title="Total Skor">
+                <i class="fas fa-trophy"></i> <span id="ui-score">0</span>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" onclick="switchTab('konsep')"><i class="fas fa-book-open"></i> Konsep</button>
+        <button class="tab-btn" onclick="switchTab('visual')"><i class="fas fa-layer-group"></i> Visualisator</button>
+        <button class="tab-btn" onclick="switchTab('latihan')"><i class="fas fa-pencil-alt"></i> Latihan</button>
+        <button class="tab-btn" onclick="switchTab('studi-kasus')"><i class="fas fa-globe"></i> Studi Kasus</button>
+        <button class="tab-btn" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game</button>
+    </nav>
+
+    <main>
+        <section id="konsep" class="tab-content active">
+            <div class="card">
+                <h2>1. Apa itu Persamaan Kuadrat?</h2>
+                <p>Persamaan kuadrat adalah polinomial berderajat dua. Bentuk umumnya adalah:</p>
+                <p style="text-align: center; font-size: 1.2rem; margin: 15px 0;">$$ax^2 + bx + c = 0$$</p>
+                <p><strong>Memfaktorkan</strong> persamaan kuadrat berarti mengubah bentuk penjumlahan tersebut menjadi bentuk perkalian dua suku binomial:</p>
+                <p style="text-align: center; font-size: 1.2rem; margin: 15px 0;">$$x^2 + bx + c = (x + p)(x + q)$$</p>
+                <p>Syarat utamanya adalah: <strong>$p + q = b$</strong> dan <strong>$p \times q = c$</strong>.</p>
+            </div>
+
+            <div class="card">
+                <h2>2. Berkenalan dengan Algebra Tiles (Ubin Aljabar)</h2>
+                <p>Untuk memahami faktorisasi agar tidak hanya sekadar menghafal rumus, kita gunakan pendekatan visual berupa ubin.</p>
+                
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+                    <div class="tile tile-x2">x²</div>
+                    <div><strong>Ubin x² :</strong> Persegi biru besar. Mewakili luas daerah $x \times x$.</div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+                    <div class="tile tile-x-v">x</div>
+                    <div><strong>Ubin x :</strong> Persegi panjang hijau. Mewakili luas daerah $x \times 1$. Bisa diletakkan vertikal atau horizontal.</div>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div class="tile tile-1">1</div>
+                    <div><strong>Ubin 1 :</strong> Persegi kuning kecil. Mewakili luas daerah satuan $1 \times 1$.</div>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                    <h3 style="color: var(--danger);">Ubin Negatif (Merah)</h3>
+                    <p>Jika persamaan memiliki nilai konstanta atau koefisien negatif, kita menggunakan ubin berwarna merah (berlaku untuk $-x^2$, $-x$, maupun $-1$). Ubin merah membatalkan ubin biasa jika digabungkan.</p>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                        <div class="tile tile-neg-x2" style="width: 50px; height: 50px; font-size: 0.7rem;">-x²</div>
+                        <div class="tile tile-neg-x-v" style="width: 20px; height: 50px; font-size: 0.7rem;">-x</div>
+                        <div class="tile tile-neg-1" style="width: 20px; height: 20px; font-size: 0.7rem;">-1</div>
+                        <span style="margin-left: 10px;">(Ubin merah digunakan untuk koefisien negatif).</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>3. Filosofi Pemfaktoran = Membangun Persegi Panjang</h2>
+                <p>Rahasia utamanya adalah: Jika Anda diberikan persamaan $x^2 + 5x + 6$, kumpulkan ubin sebanyak itu (1 biru, 5 hijau, 6 kuning).</p>
+                <p>Tugas Anda adalah menyusun semua ubin tersebut agar membentuk sebuah <strong>Persegi Panjang Sempurna</strong> tanpa ada ruang kosong atau ubin berlebih.</p>
+                <p>Jika berhasil, panjang dan lebar dari susunan tersebut adalah faktornya! Mari coba di tab <strong>Visualisator</strong>.</p>
+            </div>
+            <button class="btn" onclick="switchTab('visual')">Coba Visualisator Sekarang <i class="fas fa-arrow-right"></i></button>
+        </section>
+
+        <section id="visual" class="tab-content">
+            <div class="card">
+                <h2>Algebra Tiles Simulator</h2>
+                <p>Pilih persamaan kuadrat, lalu klik tombol untuk melihat bagaimana ubin disusun menjadi persegi panjang. Panjang sisi luar adalah faktornya!</p>
+                
+                <div style="margin: 1rem 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <label>Pilih Persamaan:</label>
+                    <select id="sim-select" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); min-width: 200px;">
+                        <!-- Options diisi otomatis via JS -->
+                    </select>
+                    <button class="btn btn-outline" onclick="showMaterials()"><i class="fas fa-box-open"></i> 1. Tampilkan Bahan</button>
+                    <button id="btn-susun" class="btn" onclick="buildTiles()" style="display: none;"><i class="fas fa-magic"></i> 2. Susun Ubin</button>
+                </div>
+
+                <div style="display: flex; gap: 2rem; align-items: stretch; flex-wrap: wrap;">
+                    <!-- Bagian Gudang Ubin -->
+                    <div style="flex: 1; min-width: 200px; border-right: 2px dashed #ccc; padding-right: 1rem;">
+                        <h3>Bahan Ubin:</h3>
+                        <div id="sim-equation" style="font-weight: bold; margin-bottom: 10px; font-size:1.2rem;">$$x^2 + 3x + 2$$</div>
+                        <div id="tile-inventory" class="tile-container">
+                            <!-- Diisi via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bagian Papan Susun -->
+                    <div style="flex: 2; min-width: 300px;">
+                        <h3>Hasil Susunan (Persegi Panjang):</h3>
+                        <div id="sim-board" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <p class="text-muted" id="sim-placeholder">Klik "Susun Ubin" untuk merangkai.</p>
+                            <!-- Grid susunan via JS -->
+                        </div>
+                        
+                        <div id="sim-result" style="margin-top: 20px; padding: 15px; background: var(--primary-light); border-radius: 8px; display: none; text-align:center;">
+                            <h4>Panjang & Lebar:</h4>
+                            <p id="sim-factors" style="font-size: 1.2rem; font-weight: bold; margin-top:5px;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="latihan" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Uji Pemahaman</h2>
+                    <span id="quiz-progress" style="font-weight: 600; color: var(--text-muted);">Soal 1/5</span>
+                </div>
+                
+                <div id="quiz-container">
+                    <h3 id="quiz-question" style="font-size: 1.3rem; margin-bottom: 1.5rem;">Memuat soal...</h3>
+                    <div id="quiz-options">
+                        <!-- Options via JS -->
+                    </div>
+                    
+                    <div id="quiz-feedback" class="feedback-box">
+                        <strong id="feedback-title"></strong>
+                        <p id="feedback-desc" style="margin-top: 5px;"></p>
+                        <button id="next-quiz-btn" class="btn" style="margin-top: 10px;" onclick="nextQuestion()">Soal Berikutnya <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div id="quiz-result" style="display: none; text-align: center; padding: 2rem 0;">
+                    <i class="fas fa-award" style="font-size: 4rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                    <h2>Latihan Selesai!</h2>
+                    <p>Skor Anda: <strong id="final-quiz-score"></strong></p>
+                    <button class="btn" onclick="initQuiz()" style="margin-top: 1rem;"><i class="fas fa-redo"></i> Ulangi Latihan</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="studi-kasus" class="tab-content">
+            <div class="card">
+                <h2>Kasus Nyata: Merancang Kolam Renang</h2>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <img src="https://placehold.co/400x250/2563EB/FFFFFF?text=Kolam+Renang+Desa" alt="Kolam Renang" style="width: 100%; border-radius: 8px;">
+                    </div>
+                    <div style="flex: 2; min-width: 300px;">
+                        <p>Pemerintah desa ingin membangun sebuah kolam renang umum berbentuk persegi panjang.</p>
+                        <p>Setelah melakukan perhitungan biaya material, arsitek menentukan bahwa <strong>luas total area kolam (termasuk pinggiran)</strong> harus mengikuti persamaan:</p>
+                        <p style="font-size: 1.3rem; font-weight: bold; color: var(--primary); text-align:center; margin: 15px 0;">Luas = $x^2 + 8x + 15$ meter persegi</p>
+                        <p>Tugas Anda sebagai asisten arsitek: Tentukan ekspresi aljabar untuk panjang dan lebar kolam tersebut agar kontraktor dapat mulai mengukur lahan!</p>
+                        
+                        <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-top: 20px;">
+                            <label><strong>Jawaban Anda:</strong></label><br>
+                            <span class="text-muted" style="font-size: 0.9rem;">Ketik faktornya. Contoh jika faktornya $(x+1)$ dan $(x+2)$, ketik "1" dan "2".</span>
+                            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                                Panjang: $(x + $ <input type="number" id="case-p" style="width: 60px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;"> $)$
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                                Lebar: $\ \ \ \ (x + $ <input type="number" id="case-q" style="width: 60px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;"> $)$
+                            </div>
+                            <button class="btn" style="margin-top: 15px;" onclick="checkCaseStudy()">Cek Jawaban</button>
+                            <p id="case-feedback" style="margin-top: 10px; font-weight: bold;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="game" class="tab-content">
+            <div class="card">
+                <h2>Faktorisasi Rush</h2>
+                <p>Uji kecepatan instingmu! Pilih sepasang faktor yang benar untuk persamaan yang muncul sebelum waktu habis. Hati-hati, jawaban salah akan mengurangi waktumu!</p>
+                
+                <div id="game-start-screen" style="text-align: center; padding: 2rem;">
+                    <button class="btn" style="font-size: 1.2rem; padding: 1rem 2rem;" onclick="startGame()"><i class="fas fa-play"></i> Mulai Game</button>
+                </div>
+
+                <div id="game-play-screen" class="game-area" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Level: <strong id="game-level">1</strong></span>
+                        <span>Skor Game: <strong id="game-score">0</strong></span>
+                    </div>
+                    
+                    <div class="timer-bar">
+                        <div id="game-timer" class="timer-progress"></div>
+                    </div>
+                    
+                    <div id="game-equation" class="equation-display">$$x^2 + 5x + 6$$</div>
+                    <p>Pilih Faktornya:</p>
+                    
+                    <div id="game-options" class="factors-grid">
+                        <!-- Buttons via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="modal-overlay" id="level-modal">
+        <div class="modal">
+            <div class="modal-icon"><i class="fas fa-level-up-alt"></i></div>
+            <h2 id="modal-title">Level Up!</h2>
+            <p id="modal-message">Kamu berhasil menyelesaikan tantangan ini.</p>
+            <button class="btn" style="margin-top: 20px;" onclick="closeModal()">Lanjutkan</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Player (Disimpan di LocalStorage jika ada)
+        let playerStats = {
+            score: 0,
+            streak: 0,
+            level: 1
+        };
+
+        // Load data on start
+        function loadData() {
+            const saved = localStorage.getItem('edudev_kuadrat_stats');
+            if (saved) {
+                playerStats = JSON.parse(saved);
+                updateUIStats();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('edudev_kuadrat_stats', JSON.stringify(playerStats));
+            updateUIStats();
+        }
+
+        function updateUIStats() {
+            document.getElementById('ui-score').innerText = playerStats.score;
+            document.getElementById('ui-streak').innerText = playerStats.streak;
+            document.getElementById('ui-level').innerText = playerStats.level;
+            
+            // Level logic (tiap 100 poin naik level)
+            const newLevel = Math.floor(playerStats.score / 100) + 1;
+            if (newLevel > playerStats.level) {
+                playerStats.level = newLevel;
+                showModal("Level Up!", `Luar biasa! Kamu mencapai Level ${playerStats.level}.`);
+            }
+        }
+
+        function addScore(points) {
+            playerStats.score += points;
+            playerStats.streak++;
+            // Bonus streak
+            if (playerStats.streak > 2) {
+                const bonus = Math.floor(playerStats.streak / 2) * 5;
+                playerStats.score += bonus;
+                showToast(`Streak Bonus +${bonus}! 🔥`, 'success');
+            }
+            saveData();
+        }
+
+        function resetStreak() {
+            playerStats.streak = 0;
+            saveData();
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // UI Helpers (Toasts & Modals)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('level-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('level-modal').classList.remove('show');
+        }
+
+        const simEquations = [
+            // Keduanya Positif
+            { p: 1, q: 1, label: "Positif" }, { p: 2, q: 1, label: "Positif" }, { p: 3, q: 1, label: "Positif" },
+            { p: 4, q: 1, label: "Positif" }, { p: 2, q: 2, label: "Positif" }, { p: 3, q: 2, label: "Positif" },
+            { p: 4, q: 2, label: "Positif" }, { p: 5, q: 2, label: "Positif" }, { p: 3, q: 3, label: "Positif" },
+            { p: 4, q: 3, label: "Positif" }, 
+            // Keduanya Negatif
+            { p: -1, q: -1, label: "Negatif" }, { p: -2, q: -1, label: "Negatif" }, { p: -3, q: -1, label: "Negatif" },
+            { p: -4, q: -1, label: "Negatif" }, { p: -2, q: -2, label: "Negatif" }, { p: -3, q: -2, label: "Negatif" },
+            { p: -4, q: -2, label: "Negatif" }, { p: -5, q: -2, label: "Negatif" }, { p: -3, q: -3, label: "Negatif" },
+            { p: -4, q: -3, label: "Negatif" }, 
+            // Campuran (Satu Positif, Satu Negatif)
+            { p: 2, q: -1, label: "Campuran" }, { p: 3, q: -1, label: "Campuran" }, { p: 4, q: -1, label: "Campuran" },
+            { p: 3, q: -2, label: "Campuran" }, { p: 4, q: -2, label: "Campuran" }, 
+            { p: -2, q: 1, label: "Campuran" }, { p: -3, q: 1, label: "Campuran" }, { p: -4, q: 1, label: "Campuran" },
+            { p: -3, q: 2, label: "Campuran" }, { p: -4, q: 2, label: "Campuran" }
+        ];
+
+        let simData = {};
+        
+        function initSimulatorOptions() {
+            const selectEl = document.getElementById('sim-select');
+            selectEl.innerHTML = ''; // Bersihkan dulu
+
+            simEquations.forEach((eq, idx) => {
+                const b = eq.p + eq.q;
+                const c = eq.p * eq.q;
+                
+                // Format string matematika Latex
+                let bStr = "";
+                if (b === 1) bStr = "+ x";
+                else if (b === -1) bStr = "- x";
+                else if (b > 0) bStr = `+ ${b}x`;
+                else if (b < 0) bStr = `- ${Math.abs(b)}x`;
+                
+                const cStr = c > 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                const eqStr = `x^2 ${bStr} ${cStr}`;
+                
+                const id = (idx + 1).toString();
+                simData[id] = {
+                    eq: eqStr,
+                    x2: 1,
+                    x: b,
+                    const: c,
+                    p: eq.p,
+                    q: eq.q
+                };
+
+                // Render opsi Dropdown HTML
+                const option = document.createElement('option');
+                option.value = id;
+                const textB = b === 1 ? '+ x' : (b === -1 ? '- x' : (b > 0 ? `+ ${b}x` : `- ${Math.abs(b)}x`));
+                const textC = c > 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                // Sembunyikan +x jika b = 0 (khusus bentuk selisih kuadrat jika ada)
+                const finalEqLabel = b === 0 ? `x² ${textC}` : `x² ${textB} ${textC}`;
+                
+                option.innerText = `${idx + 1}. ${finalEqLabel} (${eq.label})`;
+                selectEl.appendChild(option);
+            });
+        }
+
+        let currentSimId = null;
+
+        function showMaterials() {
+            const selectId = document.getElementById('sim-select').value;
+            currentSimId = selectId; // Simpan state persamaan yang sedang aktif
+            const data = simData[selectId];
+            
+            // Update Equation display di Gudang
+            const eqDiv = document.getElementById('sim-equation');
+            eqDiv.innerHTML = `$$${data.eq}$$`;
+            if(window.MathJax) MathJax.typesetPromise([eqDiv]);
+
+            // Tampilkan ubin mentah di tile-inventory
+            const inventory = document.getElementById('tile-inventory');
+            let html = '';
+            
+            // 1 ubin x2 (selalu 1 dalam simulasi ini)
+            html += `<div class="tile tile-x2">x²</div>`;
+            
+            // Menyiapkan ubin x sesuai nilai b
+            const xCount = Math.abs(data.x);
+            const xClass = data.x > 0 ? 'tile-x-v' : 'tile-neg-x-v';
+            const xLabel = data.x > 0 ? 'x' : '-x';
+            for (let i = 0; i < xCount; i++) {
+                html += `<div class="tile ${xClass}">${xLabel}</div>`;
+            }
+            
+            // Menyiapkan ubin satuan sesuai nilai c
+            const cCount = Math.abs(data.const);
+            const cClass = data.const > 0 ? 'tile-1' : 'tile-neg-1';
+            const cLabel = data.const > 0 ? '1' : '-1';
+            for (let i = 0; i < cCount; i++) {
+                html += `<div class="tile ${cClass}">${cLabel}</div>`;
+            }
+            
+            inventory.innerHTML = html;
+            
+            // Reset Papan Susun
+            document.getElementById('sim-board').innerHTML = `<p class="text-muted" id="sim-placeholder">Klik "Susun Ubin" untuk merangkai.</p>`;
+            document.getElementById('sim-result').style.display = 'none';
+            document.getElementById('btn-susun').style.display = 'inline-flex';
+        }
+
+        function buildTiles() {
+            if (!currentSimId) {
+                showToast("Tampilkan bahan terlebih dahulu!", "error");
+                return;
+            }
+            
+            const data = simData[currentSimId];
+            const board = document.getElementById('sim-board');
+            
+            let p = data.p;
+            let q = data.q;
+            let pCount = Math.abs(p);
+            let qCount = Math.abs(q);
+            
+            // Menentukan kelas dan label ubin berdasarkan nilai positif/negatif faktor
+            const pClass = p > 0 ? 'tile-x-v' : 'tile-neg-x-v';
+            const pLabel = p > 0 ? 'x' : '-x';
+            const qClass = q > 0 ? 'tile-x-h' : 'tile-neg-x-h';
+            const qLabel = q > 0 ? 'x' : '-x';
+            const constVal = p * q;
+            const cClass = constVal > 0 ? 'tile-1' : 'tile-neg-1';
+            const cLabel = constVal > 0 ? '1' : '-1';
+            
+            // Susun HTML Grid Persegi Panjang
+            let gridHTML = `<div style="display:flex; flex-direction:column; gap:2px; padding:10px; background:#e2e8f0; border-radius:8px; width:fit-content; margin:0 auto;">`;
+            
+            // Baris 1: x2 dan x vertikal (sebagai sisi lebar/p)
+            gridHTML += `<div style="display:flex; gap:2px;">`;
+            gridHTML += `<div class="tile tile-x2">x²</div>`;
+            gridHTML += `<div style="display:flex; gap:2px;">`;
+            for (let i = 0; i < pCount; i++) {
+                gridHTML += `<div class="tile ${pClass}">${pLabel}</div>`;
+            }
+            gridHTML += `</div></div>`;
+            
+            // Baris 2...qCount: x horizontal (sebagai sisi panjang/q) dan satuan 1
+            for (let i = 0; i < qCount; i++) {
+                gridHTML += `<div style="display:flex; gap:2px;">`;
+                gridHTML += `<div class="tile ${qClass}">${qLabel}</div>`;
+                gridHTML += `<div style="display:flex; gap:2px;">`;
+                for (let j = 0; j < pCount; j++) {
+                    gridHTML += `<div class="tile ${cClass}">${cLabel}</div>`;
+                }
+                gridHTML += `</div></div>`;
+            }
+            
+            gridHTML += `</div>`;
+            
+            // Cek apakah ada zero pairs (Faktor Campuran: positif dan negatif)
+            let zeroPairNote = "";
+            if (p * q < 0) {
+                zeroPairNote = "<p style='font-size:0.9rem; color:#b45309; margin-top:15px;'><i class='fas fa-info-circle'></i> <b>Catatan Edukasi:</b> Karena faktor ini adalah Campuran (+ dan -), kita menggunakan <i>Zero Pair</i>. Kita secara ajaib 'meminjam' ubin +x dan -x tambahan untuk membentuk persegi panjang sempurna, tanpa merubah nilai total persamaannya.</p>";
+            }
+            
+            // Tampilkan loading spinner
+            board.innerHTML = `<div style="text-align:center;"><i class="fas fa-cog fa-spin" style="font-size:2rem; color:var(--primary);"></i><br>Menyusun...</div>`;
+            document.getElementById('btn-susun').style.display = 'none';
+            
+            // Terapkan hasil setelah delay singkat
+            setTimeout(() => {
+                board.innerHTML = gridHTML;
+                const resDiv = document.getElementById('sim-result');
+                resDiv.style.display = 'block';
+                
+                const factorsDiv = document.getElementById('sim-factors');
+                const pSign = p > 0 ? `+ ${p}` : `- ${Math.abs(p)}`;
+                const qSign = q > 0 ? `+ ${q}` : `- ${Math.abs(q)}`;
+                factorsDiv.innerHTML = `$$(x ${pSign})(x ${qSign})$$`;
+                
+                if (zeroPairNote) {
+                    factorsDiv.innerHTML += zeroPairNote;
+                }
+                
+                if (window.MathJax) {
+                    MathJax.typesetPromise([factorsDiv]).catch(err => console.log(err));
+                }
+                showToast("Berhasil disusun menjadi Persegi Panjang!", "success");
+            }, 800);
+        }
+
+        const quizBank = [
+            {
+                q: "Apa bentuk pemfaktoran dari persamaan: $x^2 + 7x + 10$ ?",
+                options: ["$(x+2)(x+5)$", "$(x+3)(x+4)$", "$(x+1)(x+10)$", "$(x-2)(x-5)$"],
+                answer: 0,
+                explanation: "Cari dua bilangan yang jika dijumlahkan = 7, dan jika dikalikan = 10. Bilangan itu adalah 2 dan 5."
+            },
+            {
+                q: "Jika sebuah persamaan kuadrat difaktorkan menjadi $(x+4)(x+4)$, maka persamaannya adalah...",
+                options: ["$x^2 + 8x + 16$", "$x^2 + 16x + 8$", "$x^2 + 4x + 16$", "$x^2 + 8x + 8$"],
+                answer: 0,
+                explanation: "Kalikan $(x+4)(x+4) = x(x+4) + 4(x+4) = x^2 + 4x + 4x + 16 = x^2 + 8x + 16$."
+            },
+            {
+                q: "Faktorkan persamaan berikut: $x^2 - 9$. (Petunjuk: Selisih dua kuadrat)",
+                options: ["$(x-3)(x-3)$", "$(x+3)(x+3)$", "$(x+3)(x-3)$", "$(x-9)(x+1)$"],
+                answer: 2,
+                explanation: "Bentuk $a^2 - b^2$ difaktorkan menjadi $(a+b)(a-b)$. Jadi $x^2 - 3^2$ menjadi $(x+3)(x-3)$."
+            },
+            {
+                q: "Dua bilangan apa yang jumlahnya 2 dan hasil kalinya -15? Sehingga memfaktorkan $x^2 + 2x - 15$.",
+                options: ["5 dan -3", "-5 dan 3", "15 dan -1", "-15 dan 1"],
+                answer: 0,
+                explanation: "$5 + (-3) = 2$ dan $5 \\times (-3) = -15$. Jadi faktornya $(x+5)(x-3)$."
+            },
+            {
+                q: "Dalam Algebra Tiles, ubin biru besar merepresentasikan...",
+                options: ["Nilai $x$", "Luas $x^2$", "Angka $1$", "Konstanta $c$"],
+                answer: 1,
+                explanation: "Ubin biru besar memiliki panjang sisi $x$ dan $x$, sehingga luas areanya adalah $x^2$."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let quizScore = 0;
+
+        function initQuiz() {
+            currentQuestion = 0;
+            quizScore = 0;
+            document.getElementById('quiz-result').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizBank[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Soal ${currentQuestion + 1}/${quizBank.length}`;
+            
+            const qEl = document.getElementById('quiz-question');
+            qEl.innerHTML = q.q;
+            
+            const optsContainer = document.getElementById('quiz-options');
+            optsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.innerHTML = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                optsContainer.appendChild(btn);
+            });
+            
+            document.getElementById('quiz-feedback').classList.remove('show');
+            MathJax.typesetPromise([qEl, optsContainer]);
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            // Disable all buttons
+            const btns = document.querySelectorAll('.quiz-option');
+            btns.forEach(b => b.disabled = true);
+            
+            const q = quizBank[currentQuestion];
+            const feedbackBox = document.getElementById('quiz-feedback');
+            const title = document.getElementById('feedback-title');
+            const desc = document.getElementById('feedback-desc');
+            
+            feedbackBox.className = 'feedback-box show';
+            
+            if (selectedIndex === q.answer) {
+                btnElement.classList.add('correct');
+                feedbackBox.classList.add('feedback-correct');
+                title.innerHTML = '<i class="fas fa-check-circle"></i> Tepat Sekali!';
+                desc.innerHTML = q.explanation;
+                quizScore += 20;
+                addScore(10); // Gamification score
+                showToast("Jawaban Benar! +10 XP", "success");
+            } else {
+                btnElement.classList.add('wrong');
+                btns[q.answer].classList.add('correct'); // Show correct answer
+                feedbackBox.classList.add('feedback-wrong');
+                title.innerHTML = '<i class="fas fa-times-circle"></i> Kurang Tepat';
+                desc.innerHTML = "<strong>Pembahasan:</strong> " + q.explanation;
+                resetStreak();
+                showToast("Aduh, salah. Coba perhatikan pembahasannya.", "error");
+            }
+            
+            MathJax.typesetPromise([desc]);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizBank.length) {
+                loadQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            const res = document.getElementById('quiz-result');
+            res.style.display = 'block';
+            document.getElementById('final-quiz-score').innerText = `${quizScore} / 100`;
+            
+            if(quizScore === 100) {
+                showModal("Sempurna!", "Kamu menguasai materi latihan dengan nilai 100!");
+                addScore(50); // Bonus penyelesaian
+            }
+        }
+
+        function checkCaseStudy() {
+            const p = parseInt(document.getElementById('case-p').value);
+            const q = parseInt(document.getElementById('case-q').value);
+            const feedback = document.getElementById('case-feedback');
+            
+            if (isNaN(p) || isNaN(q)) {
+                feedback.innerText = "Masukkan angka untuk kedua faktor!";
+                feedback.style.color = "var(--danger)";
+                return;
+            }
+
+            // Target sum = 8, prod = 15. The numbers are 3 and 5.
+            if ((p === 3 && q === 5) || (p === 5 && q === 3)) {
+                feedback.innerHTML = `<i class="fas fa-check"></i> Luar biasa! Panjang kolam $(x+${Math.max(p,q)})$ dan lebarnya $(x+${Math.min(p,q)})$. Kontraktor siap bekerja!`;
+                feedback.style.color = "var(--secondary)";
+                addScore(30);
+                showToast("Studi Kasus Dipecahkan! +30 XP", "success");
+                MathJax.typesetPromise([feedback]);
+            } else {
+                feedback.innerHTML = `<i class="fas fa-times"></i> Hm, cek lagi. Cari dua bilangan yang dijumlah hasilnya 8, dikali hasilnya 15.`;
+                feedback.style.color = "var(--danger)";
+                resetStreak();
+            }
+        }
+
+        const gameData = [
+            { eq: "x^2 + 3x + 2", ans: "(x+1)(x+2)", fakes: ["(x+3)(x-1)", "(x+2)(x-1)", "(x+3)(x+2)"] },
+            { eq: "x^2 + 8x + 12", ans: "(x+6)(x+2)", fakes: ["(x+4)(x+3)", "(x+8)(x+4)", "(x+12)(x+1)"] },
+            { eq: "x^2 - 4x - 5", ans: "(x-5)(x+1)", fakes: ["(x-4)(x-1)", "(x+5)(x-1)", "(x-5)(x-1)"] },
+            { eq: "x^2 - 9", ans: "(x-3)(x+3)", fakes: ["(x-9)(x+1)", "(x-3)(x-3)", "(x-4)(x-5)"] },
+            { eq: "x^2 + 6x + 9", ans: "(x+3)(x+3)", fakes: ["(x+6)(x+3)", "(x+9)(x+1)", "(x-3)(x-3)"] }
+        ];
+
+        let gameTimer;
+        let timeLeft = 100; // percent
+        let gameScore = 0;
+        let currentGameEq;
+
+        function startGame() {
+            document.getElementById('game-start-screen').style.display = 'none';
+            document.getElementById('game-play-screen').style.display = 'block';
+            gameScore = 0;
+            document.getElementById('game-score').innerText = gameScore;
+            nextGameRound();
+        }
+
+        function nextGameRound() {
+            clearInterval(gameTimer);
+            timeLeft = 100;
+            updateTimerUI();
+            
+            // Pick random equation
+            currentGameEq = gameData[Math.floor(Math.random() * gameData.length)];
+            
+            const eqDiv = document.getElementById('game-equation');
+            eqDiv.innerHTML = `$$${currentGameEq.eq}$$`;
+            
+            // Prepare options (1 true, 3 fakes), shuffle them
+            let options = [currentGameEq.ans, ...currentGameEq.fakes];
+            options.sort(() => Math.random() - 0.5); // Simple shuffle
+            
+            const optDiv = document.getElementById('game-options');
+            optDiv.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'factor-btn';
+                btn.innerHTML = `$$${opt}$$`;
+                btn.onclick = () => checkGameAnswer(opt);
+                optDiv.appendChild(btn);
+            });
+            
+            MathJax.typesetPromise([eqDiv, optDiv]);
+            
+            // Start Timer
+            gameTimer = setInterval(() => {
+                timeLeft -= 1.5; // Kecepatan turunnya waktu
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    endGame("Waktu Habis!");
+                }
+            }, 100);
+        }
+
+        function updateTimerUI() {
+            const bar = document.getElementById('game-timer');
+            bar.style.width = `${Math.max(0, timeLeft)}%`;
+            if(timeLeft > 50) bar.style.backgroundColor = 'var(--secondary)';
+            else if(timeLeft > 20) bar.style.backgroundColor = 'var(--warning)';
+            else bar.style.backgroundColor = 'var(--danger)';
+        }
+
+        function checkGameAnswer(selected) {
+            if (selected === currentGameEq.ans) {
+                // Benar
+                let points = Math.ceil(timeLeft / 10); // Lebih cepat, poin lebih besar
+                gameScore += points;
+                addScore(points); // Tambah ke poin global akun
+                document.getElementById('game-score').innerText = gameScore;
+                
+                showToast(`Kilat! +${points} Skor`, 'success');
+                nextGameRound(); // Lanjut ronde berikutnya otomatis
+            } else {
+                // Salah
+                timeLeft -= 20; // Penalti waktu 20%
+                showToast("Salah! Penalti Waktu", 'error');
+                resetStreak();
+                if (timeLeft <= 0) endGame("Skor Berakhir!");
+                else updateTimerUI();
+            }
+        }
+
+        function endGame(reason) {
+            clearInterval(gameTimer);
+            document.getElementById('game-play-screen').style.display = 'none';
+            document.getElementById('game-start-screen').style.display = 'block';
+            
+            showModal("Game Over", `${reason} Skor Akhir Game-mu: ${gameScore}`);
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            loadData();
+            initSimulatorOptions(); // Panggil generator persamaan
+            initQuiz();
+            
+            // Render MathJax di seluruh halaman di awal
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log(err.message));
+            }
+        };
+
+    </script>
+</body>
+</html>
